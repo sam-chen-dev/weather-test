@@ -74,4 +74,7 @@ dependencies {
 
     //GPS
     implementation(libs.play.services.location)
+
+    //Mockito
+    testImplementation(libs.mockito.junit.jupiter)
 }
