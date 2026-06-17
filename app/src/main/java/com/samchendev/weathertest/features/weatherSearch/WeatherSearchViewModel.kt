@@ -40,9 +40,9 @@ class WeatherSearchViewModel(
 
     private fun createUiState(): WeatherSearchUiState = WeatherSearchUiState(
         weatherInfo = null,
+        isProcessing = false,
         onSearchClick = ::getWeatherByCity,
         onGetMyCityWeatherTrigger = ::getMyCityWeather,
-        isProcessing = false
     )
 
     private fun getWeatherForLastCity() = uiScope.launch {
