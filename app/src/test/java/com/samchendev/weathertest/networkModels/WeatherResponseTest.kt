@@ -1,10 +1,10 @@
-package com.samchendev.weathertest
+package com.samchendev.weathertest.networkModels
 
 import com.samchendev.weathertest.models.networkModels.Main
 import com.samchendev.weathertest.models.networkModels.Weather
 import com.samchendev.weathertest.models.networkModels.WeatherResponse
 import com.samchendev.weathertest.models.networkModels.Wind
-import org.junit.Assert.assertEquals
+import org.junit.Assert
 import org.junit.Test
 
 class WeatherResponseTest {
@@ -39,16 +39,16 @@ class WeatherResponseTest {
 
         val weatherInfo = weatherResponse.toWeatherInfo()
 
-        assertEquals("New York", weatherInfo.location)
-        assertEquals("broken clouds", weatherInfo.description)
-        assertEquals("https://openweathermap.org/payload/api/media/file/01d.png", weatherInfo.iconUrl)
-        assertEquals(23.45, weatherInfo.temperature, 0.0)
-        assertEquals(24.0, weatherInfo.feelsLike, 0.0)
-        assertEquals(21.0, weatherInfo.minTemperature, 0.0)
-        assertEquals(26.0, weatherInfo.maxTemperature, 0.0)
-        assertEquals(1100, weatherInfo.pressure)
-        assertEquals(65, weatherInfo.humidity)
-        assertEquals(10000, weatherInfo.visibility)
-        assertEquals(3.5, weatherInfo.windSpeed, 0.0)
+        Assert.assertEquals("New York", weatherInfo.location)
+        Assert.assertEquals("broken clouds", weatherInfo.description)
+        Assert.assertEquals("https://openweathermap.org/payload/api/media/file/01d.png", weatherInfo.iconUrl)
+        Assert.assertEquals(23.45, weatherInfo.temperature, 0.0)
+        Assert.assertEquals(24.0, weatherInfo.feelsLike, 0.0)
+        Assert.assertEquals(21.0, weatherInfo.minTemperature, 0.0)
+        Assert.assertEquals(26.0, weatherInfo.maxTemperature, 0.0)
+        Assert.assertEquals(1100, weatherInfo.pressure)
+        Assert.assertEquals(65, weatherInfo.humidity)
+        Assert.assertEquals(10000, weatherInfo.visibility)
+        Assert.assertEquals(3.5, weatherInfo.windSpeed, 0.0)
     }
 }
