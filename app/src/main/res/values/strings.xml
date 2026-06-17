@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Weather Test</string>
+
+    <!--Weather Search-->
+    <string name="weather_search_title">Weather Search</string>
+    <string name="city_label">City</string>
+    <string name="location_text">Location: %s</string>
+    <string name="temperature_text">Temperature: %.2f°C</string>
+    <string name="feels_like_text">Fells like: %.2f°C</string>
+    <string name="min_temperature_text">Min Temperature: %.2f°C</string>
+    <string name="max_temperature_text">Max Temperature: %.2f°C</string>
+    <string name="pressure_text">Pressure: %d hPa</string>
+    <string name="humidity_text">Humidity: %d%%</string>
+    <string name="visibility_text">Visibility: %d m</string>
+    <string name="wind_speed_text">Wind speed: %.2f m/s</string>
+    <string name="city_not_found_message">City not found</string>
+    <string name="location_permission_not_granted_message">Location permission is required to get local weather information</string>
+    <string name="gps_not_enabled_message">GPS is required to be enabled to get local weather information</string>
+
+    <!--General-->
+    <string name="processing">Processing…</string>
+    <string name="unknown_error">Unknown error</string>
+
+</resources>
