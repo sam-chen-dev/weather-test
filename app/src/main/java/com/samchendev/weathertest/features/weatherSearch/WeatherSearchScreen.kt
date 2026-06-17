@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.utlikotlin.Button
@@ -43,7 +44,6 @@ import com.samchendev.weathertest.R
 import com.samchendev.weathertest.models.domainModels.WeatherInfo
 import com.samchendev.weathertest.ui.theme.ExtraLarge
 import com.samchendev.weathertest.utils.ProcessingDialog
-import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -103,7 +103,7 @@ private fun WeatherSearchContent(
         Toolbar()
 
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxSize()
         ) {
             ControlArea(cityState, uiState.onSearchClick, onGetMyCityLocationClick)
 
@@ -199,4 +199,31 @@ private fun InfoArea(weatherInfo: WeatherInfo) {
         Text(stringResource(R.string.visibility_text, weatherInfo.visibility))
         Text(stringResource(R.string.wind_speed_text, weatherInfo.windSpeed))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WeatherSearchContentPreview() {
+    WeatherSearchContent(
+        uiState = WeatherSearchUiState(
+            weatherInfo = WeatherInfo(
+                description = "broken clouds",
+                iconUrl = "https://openweathermap.org/payload/api/media/file/01d.png",
+                temperature = 28.33,
+                feelsLike = 28.54,
+                minTemperature = 27.10,
+                maxTemperature = 29.25,
+                pressure = 1016,
+                humidity = 47,
+                visibility = 10000,
+                windSpeed = 0.89,
+                location = "Boston"
+            ),
+            isProcessing = false,
+            onSearchClick = {},
+            onGetMyCityWeatherTrigger = {}
+        ),
+        cityState = TextFieldState(),
+        onGetMyCityLocationClick = {}
+    )
 }
