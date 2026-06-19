@@ -77,4 +77,7 @@ dependencies {
 
     //Mockito
     testImplementation(libs.mockito.junit.jupiter)
+
+    //Coroutine Test
+    testImplementation(libs.kotlinx.coroutines.test)
 }
