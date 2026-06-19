@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.samchendev.weathertest.R
-import com.samchendev.weathertest.managers.CityManager
+import com.samchendev.weathertest.managers.cityManager.CityManager
 import com.samchendev.weathertest.models.domainModels.WeatherInfo
 import com.samchendev.weathertest.repos.WeatherRepoImpl
 import kotlinx.coroutines.flow.MutableSharedFlow
