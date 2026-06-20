@@ -1,5 +1,7 @@
 package com.samchendev.weathertest.viewModels
 
+import androidx.compose.foundation.text.input.setTextAndSelectAll
+import com.samchendev.weathertest.R
 import com.samchendev.weathertest.features.weatherSearch.WeatherSearchViewModel
 import com.samchendev.weathertest.managers.cityManager.CityManager
 import com.samchendev.weathertest.managers.cityManager.CityStorage
@@ -10,7 +12,12 @@ import com.samchendev.weathertest.models.networkModels.Wind
 import com.samchendev.weathertest.repos.WeatherRepoImpl
 import com.samchendev.weathertest.services.WeatherApi
 import com.samchendev.weathertest.utils.Constants
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -38,8 +45,62 @@ class WeatherSearchViewModelTest {
         assertEquals(23.45, weatherInfo?.temperature ?: 0.0, 0.0)
     }
 
-    private class FakeCityStorage(private val savedCity: String) : CityStorage {
-        override suspend fun saveCity(key: String, value: String) {}
+    @Test
+    fun `search city updates weather info and saves city when api succeeds`() = runTest {
+        val cityStorage = FakeCityStorage(null)     // Start with no saved city, avoiding init
+        val cityManager = CityManager(cityStorage)
+
+        val weatherApi = FakeWeatherApi()
+        val weatherRepo = WeatherRepoImpl(weatherApi)
+
+        val viewModel = WeatherSearchViewModel(weatherRepo, cityManager)
+
+        viewModel.cityState.setTextAndSelectAll("Boston")
+        viewModel.uiState.value.onSearchClick()
+
+        val weatherInfo = viewModel.uiState.value.weatherInfo
+
+        assertEquals("Boston", weatherApi.requestedCity)
+        assertEquals("Boston", weatherInfo?.location)
+        assertEquals("broken clouds", weatherInfo?.description)
+        assertEquals(23.45, weatherInfo?.temperature ?: 0.0, 0.0)
+
+        assertEquals("Boston", cityStorage.savedCity)
+        assertEquals("Boston", cityManager.getCity())
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `search invalid city throws exception and emit error message`() = runTest {
+        val cityStorage = FakeCityStorage(null)
+        val cityManager = CityManager(cityStorage)
+
+        val weatherApi = FakeFailingWeatherApi()
+        val weatherRepo = WeatherRepoImpl(weatherApi)
+
+        val viewModel = WeatherSearchViewModel(weatherRepo, cityManager)
+
+        viewModel.cityState.setTextAndSelectAll("abcd")     // Invalid city name
+
+        val errorMessages = mutableListOf<Int>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.errorMessage.collect { errorMessages.add(it) }
+        }
+
+        viewModel.uiState.value.onSearchClick()
+
+        assertEquals(false, viewModel.uiState.value.isProcessing)
+        assertEquals(R.string.city_not_found_message, errorMessages.firstOrNull())
+        assertEquals(null, viewModel.uiState.value.weatherInfo)
+
+        assertEquals(null, cityStorage.savedCity)
+        assertEquals(null, cityManager.getCity())
+    }
+
+    private class FakeCityStorage(var savedCity: String?) : CityStorage {
+        override suspend fun saveCity(key: String, value: String) {
+            savedCity = value
+        }
 
         override fun getCity(key: String): String? {
             return if (key == Constants.CITY_KEY) savedCity else null
@@ -52,6 +113,18 @@ class WeatherSearchViewModelTest {
         override suspend fun getWeather(city: String): Response<WeatherResponse> {
             requestedCity = city
             return Response.success(createWeatherResponse(city))
+        }
+
+        override suspend fun getWeather(lat: Double, lon: Double): Response<WeatherResponse> {
+            throw NotImplementedError("Not needed for this test")
+        }
+    }
+
+    private class FakeFailingWeatherApi : WeatherApi {
+        override suspend fun getWeather(city: String): Response<WeatherResponse> {
+            val errorMessage = "{\"message\": \"City not found\"}"
+            val errorBody = errorMessage.toResponseBody("application/json".toMediaType())
+            return Response.error(404, errorBody)
         }
 
         override suspend fun getWeather(lat: Double, lon: Double): Response<WeatherResponse> {
