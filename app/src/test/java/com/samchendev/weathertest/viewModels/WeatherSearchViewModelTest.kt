@@ -46,6 +46,21 @@ class WeatherSearchViewModelTest {
     }
 
     @Test
+    fun `init does nothing when no city is saved`() = runTest {
+        val cityStorage = FakeCityStorage(null)
+        val cityManager = CityManager(cityStorage)
+
+        val weatherApi = FakeWeatherApi()
+        val weatherRepo = WeatherRepoImpl(weatherApi)
+
+        val viewModel = WeatherSearchViewModel(weatherRepo, cityManager)
+
+        assertEquals(null, weatherApi.requestedCity)
+        assertEquals(null, viewModel.uiState.value.weatherInfo)
+        assertEquals(false, viewModel.uiState.value.isProcessing)
+    }
+
+    @Test
     fun `search city updates weather info and saves city when api succeeds`() = runTest {
         val cityStorage = FakeCityStorage(null)     // Start with no saved city, avoiding init
         val cityManager = CityManager(cityStorage)
