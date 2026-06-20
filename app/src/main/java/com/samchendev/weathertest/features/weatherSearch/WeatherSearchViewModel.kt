@@ -12,7 +12,7 @@ import com.google.android.gms.location.Priority
 import com.samchendev.weathertest.R
 import com.samchendev.weathertest.managers.cityManager.CityManager
 import com.samchendev.weathertest.models.domainModels.WeatherInfo
-import com.samchendev.weathertest.repos.WeatherRepoImpl
+import com.samchendev.weathertest.repos.WeatherRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 class WeatherSearchViewModel(
-    private val weatherRepo: WeatherRepoImpl,
+    private val weatherRepo: WeatherRepo,
     private val cityManager: CityManager
 ) : ViewModel() {
     private val uiScope = viewModelScope
