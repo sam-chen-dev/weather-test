@@ -11,6 +11,9 @@ import com.samchendev.weathertest.data.remote.models.WeatherResponse
 import com.samchendev.weathertest.data.remote.models.Wind
 import com.samchendev.weathertest.data.repos.WeatherRepoImpl
 import com.samchendev.weathertest.data.remote.WeatherApi
+import com.samchendev.weathertest.domain.userCases.GetLastCityUseCase
+import com.samchendev.weathertest.domain.userCases.GetWeatherInfoUseCase
+import com.samchendev.weathertest.domain.userCases.SaveLastCityUseCase
 import com.samchendev.weathertest.utils.Constants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -35,7 +38,11 @@ class WeatherSearchViewModelTest {
         val weatherApi = FakeWeatherApi()
         val weatherRepo = WeatherRepoImpl(weatherApi)
 
-        val viewModel = WeatherSearchViewModel(weatherRepo, cityManager)        // Trigger the init
+        val getWeatherInfoUseCase = GetWeatherInfoUseCase(weatherRepo)
+        val getLastCityUseCase = GetLastCityUseCase(cityManager)
+        val saveLastCityUseCase = SaveLastCityUseCase(cityManager)
+
+        val viewModel = WeatherSearchViewModel(getWeatherInfoUseCase, getLastCityUseCase, saveLastCityUseCase)      // Trigger the init
 
         val weatherInfo = viewModel.uiState.value.weatherInfo
 
@@ -53,7 +60,11 @@ class WeatherSearchViewModelTest {
         val weatherApi = FakeWeatherApi()
         val weatherRepo = WeatherRepoImpl(weatherApi)
 
-        val viewModel = WeatherSearchViewModel(weatherRepo, cityManager)
+        val getWeatherInfoUseCase = GetWeatherInfoUseCase(weatherRepo)
+        val getLastCityUseCase = GetLastCityUseCase(cityManager)
+        val saveLastCityUseCase = SaveLastCityUseCase(cityManager)
+
+        val viewModel = WeatherSearchViewModel(getWeatherInfoUseCase, getLastCityUseCase, saveLastCityUseCase)
 
         assertEquals(null, weatherApi.requestedCity)
         assertEquals(null, viewModel.uiState.value.weatherInfo)
@@ -68,7 +79,11 @@ class WeatherSearchViewModelTest {
         val weatherApi = FakeWeatherApi()
         val weatherRepo = WeatherRepoImpl(weatherApi)
 
-        val viewModel = WeatherSearchViewModel(weatherRepo, cityManager)
+        val getWeatherInfoUseCase = GetWeatherInfoUseCase(weatherRepo)
+        val getLastCityUseCase = GetLastCityUseCase(cityManager)
+        val saveLastCityUseCase = SaveLastCityUseCase(cityManager)
+
+        val viewModel = WeatherSearchViewModel(getWeatherInfoUseCase, getLastCityUseCase, saveLastCityUseCase)
 
         viewModel.cityState.setTextAndSelectAll("Boston")
         viewModel.uiState.value.onSearchClick()
@@ -90,10 +105,14 @@ class WeatherSearchViewModelTest {
         val cityStorage = FakeCityStorage(null)
         val cityManager = CityManager(cityStorage)
 
-        val weatherApi = FakeFailingWeatherApi()
+        val weatherApi = FakeWeatherApi()
         val weatherRepo = WeatherRepoImpl(weatherApi)
 
-        val viewModel = WeatherSearchViewModel(weatherRepo, cityManager)
+        val getWeatherInfoUseCase = GetWeatherInfoUseCase(weatherRepo)
+        val getLastCityUseCase = GetLastCityUseCase(cityManager)
+        val saveLastCityUseCase = SaveLastCityUseCase(cityManager)
+
+        val viewModel = WeatherSearchViewModel(getWeatherInfoUseCase, getLastCityUseCase, saveLastCityUseCase)
 
         viewModel.cityState.setTextAndSelectAll("abcd")     // Invalid city name
 
