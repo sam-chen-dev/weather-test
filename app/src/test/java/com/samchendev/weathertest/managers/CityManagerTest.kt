@@ -1,7 +1,7 @@
 package com.samchendev.weathertest.managers
 
-import com.samchendev.weathertest.managers.cityManager.CityManager
-import com.samchendev.weathertest.managers.cityManager.CityStorage
+import com.samchendev.weathertest.domain.managers.CityManager
+import com.samchendev.weathertest.domain.managers.CityStorage
 import com.samchendev.weathertest.utils.Constants
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals

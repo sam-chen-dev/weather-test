@@ -2,15 +2,15 @@ package com.samchendev.weathertest.viewModels
 
 import androidx.compose.foundation.text.input.setTextAndSelectAll
 import com.samchendev.weathertest.R
-import com.samchendev.weathertest.features.weatherSearch.WeatherSearchViewModel
-import com.samchendev.weathertest.managers.cityManager.CityManager
-import com.samchendev.weathertest.managers.cityManager.CityStorage
-import com.samchendev.weathertest.models.networkModels.Main
-import com.samchendev.weathertest.models.networkModels.Weather
-import com.samchendev.weathertest.models.networkModels.WeatherResponse
-import com.samchendev.weathertest.models.networkModels.Wind
-import com.samchendev.weathertest.repos.WeatherRepoImpl
-import com.samchendev.weathertest.services.WeatherApi
+import com.samchendev.weathertest.presentation.features.weatherSearch.WeatherSearchViewModel
+import com.samchendev.weathertest.domain.managers.CityManager
+import com.samchendev.weathertest.domain.managers.CityStorage
+import com.samchendev.weathertest.data.remote.models.Main
+import com.samchendev.weathertest.data.remote.models.Weather
+import com.samchendev.weathertest.data.remote.models.WeatherResponse
+import com.samchendev.weathertest.data.remote.models.Wind
+import com.samchendev.weathertest.data.repos.WeatherRepoImpl
+import com.samchendev.weathertest.data.remote.WeatherApi
 import com.samchendev.weathertest.utils.Constants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

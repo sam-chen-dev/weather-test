@@ -1,9 +1,9 @@
 package com.samchendev.weathertest.networkModels
 
-import com.samchendev.weathertest.models.networkModels.Main
-import com.samchendev.weathertest.models.networkModels.Weather
-import com.samchendev.weathertest.models.networkModels.WeatherResponse
-import com.samchendev.weathertest.models.networkModels.Wind
+import com.samchendev.weathertest.data.remote.models.Main
+import com.samchendev.weathertest.data.remote.models.Weather
+import com.samchendev.weathertest.data.remote.models.WeatherResponse
+import com.samchendev.weathertest.data.remote.models.Wind
 import org.junit.Assert
 import org.junit.Test
 

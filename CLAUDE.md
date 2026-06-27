@@ -28,7 +28,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Single-module Android app (`com.samchendev.weathertest`). Currently has one feature: weather search by city name or GPS coordinates.
 
-**Layer flow:** `Screen` → `ViewModel` → `Repo` (interface) → `WeatherApi` (Retrofit)
+**Layer flow:** `Screen` → `ViewModel` → `UseCases` → `Repo` / `CityManager` → `WeatherApi` (Retrofit) / `DataStore`
 
 ### Key patterns
 
@@ -38,13 +38,17 @@ Single-module Android app (`com.samchendev.weathertest`). Currently has one feat
 
 **City text field lives on the ViewModel** — `WeatherSearchViewModel.cityState` is a Compose `TextFieldState`. The screen binds to it directly; no state hoisting through the UiState.
 
-**Model mapping** — Network models in `models/networkModels/` are `@Serializable` data classes. `WeatherResponse.toWeatherInfo()` maps to the clean domain model in `models/domainModels/WeatherInfo`. No mapper class; the conversion method is on the network model itself.
+**Model mapping** — Network models in `data/remote/models/` are `@Serializable` data classes. `WeatherResponse.toWeatherInfo()` maps to the clean domain model in `domain/models/WeatherInfo`. No mapper class; the conversion method is on the network model itself.
+
+**Use cases are thin wrappers** — `domain/userCases/` contains `GetWeatherInfoUseCase` (wraps repo), `GetLastCityUseCase` and `SaveLastCityUseCase` (wrap `CityManager`). They exist to decouple the ViewModel from concrete repo/manager types.
+
+**GPS location via coroutine bridge** — `WeatherSearchViewModel.getCurrentLocation` wraps `FusedLocationProviderClient.getCurrentLocation` (Google Play Services) using `suspendCancellableCoroutine`, converting the callback API to a suspend function.
 
 ### Dependency Injection (Koin)
 
 `di/Modules.kt` holds a single `appModule`. All bindings are `single` (singletons) except ViewModels which use `viewModel { }`. `WeatherTestApplication` starts Koin in `onCreate`.
 
-`CityStorage` interface → `DataStoreCityStorage` (wraps `DataStore` from `util-kotlin`) → `CityManager` (domain-level wrapper that hardcodes the storage key).
+`CityStorage` interface → `DataStoreCityStorage` (wraps `DataStore` from `util-kotlin`) → `CityManager` (domain-level wrapper that hardcodes the storage key) → `GetLastCityUseCase` / `SaveLastCityUseCase` → `WeatherSearchViewModel`.
 
 ### Navigation (Navigation3)
 
@@ -58,7 +62,7 @@ Uses `androidx.navigation3` (not Navigation 2). Nav destination keys are `@Seria
 
 - JUnit 4 with `runTest` (coroutines-test)
 - `MainDispatcherRule` swaps `Dispatchers.Main` for `UnconfinedTestDispatcher` — apply it with `@get:Rule`
-- Tests use hand-written fakes (`FakeCityStorage`, `FakeWeatherApi`) rather than Mockito mocks; real `WeatherRepoImpl` and `CityManager` are instantiated in tests
+- Tests use hand-written fakes (`FakeCityStorage`, `FakeWeatherApi`) rather than Mockito mocks; real `WeatherRepoImpl`, `CityManager`, and use cases are instantiated in tests. Fakes are private inner classes inside the test class, not separate files.
 - `testOptions { unitTests.isReturnDefaultValues = true }` is set in `build.gradle.kts` to suppress Android framework crashes in unit tests
 
 ### External library: util-kotlin

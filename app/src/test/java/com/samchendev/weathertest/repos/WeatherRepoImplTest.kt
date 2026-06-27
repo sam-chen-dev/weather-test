@@ -1,10 +1,11 @@
 package com.samchendev.weathertest.repos
 
-import com.samchendev.weathertest.models.networkModels.Main
-import com.samchendev.weathertest.models.networkModels.Weather
-import com.samchendev.weathertest.models.networkModels.WeatherResponse
-import com.samchendev.weathertest.models.networkModels.Wind
-import com.samchendev.weathertest.services.WeatherApi
+import com.samchendev.weathertest.data.repos.WeatherRepoImpl
+import com.samchendev.weathertest.data.remote.models.Main
+import com.samchendev.weathertest.data.remote.models.Weather
+import com.samchendev.weathertest.data.remote.models.WeatherResponse
+import com.samchendev.weathertest.data.remote.models.Wind
+import com.samchendev.weathertest.data.remote.WeatherApi
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody

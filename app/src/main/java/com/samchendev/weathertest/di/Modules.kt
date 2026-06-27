@@ -1,13 +1,16 @@
 package com.samchendev.weathertest.di
 
 import com.example.utlikotlin.DataStore
-import com.samchendev.weathertest.features.weatherSearch.WeatherSearchViewModel
-import com.samchendev.weathertest.managers.cityManager.CityManager
-import com.samchendev.weathertest.managers.cityManager.CityStorage
-import com.samchendev.weathertest.managers.cityManager.DataStoreCityStorage
-import com.samchendev.weathertest.repos.WeatherRepo
-import com.samchendev.weathertest.repos.WeatherRepoImpl
-import com.samchendev.weathertest.services.OpenWeatherService
+import com.samchendev.weathertest.domain.managers.CityStorage
+import com.samchendev.weathertest.data.local.DataStoreCityStorage
+import com.samchendev.weathertest.data.remote.OpenWeatherService
+import com.samchendev.weathertest.data.repos.WeatherRepoImpl
+import com.samchendev.weathertest.domain.managers.CityManager
+import com.samchendev.weathertest.domain.repos.WeatherRepo
+import com.samchendev.weathertest.domain.userCases.GetLastCityUseCase
+import com.samchendev.weathertest.domain.userCases.GetWeatherInfoUseCase
+import com.samchendev.weathertest.domain.userCases.SaveLastCityUseCase
+import com.samchendev.weathertest.presentation.features.weatherSearch.WeatherSearchViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -26,6 +29,11 @@ val appModule = module {
     /*Repos*/
     single<WeatherRepo> { WeatherRepoImpl(get()) }
 
+    /*UseCase*/
+    single { GetWeatherInfoUseCase(get()) }
+    single { GetLastCityUseCase(get()) }
+    single { SaveLastCityUseCase(get()) }
+
     /*ViewModels*/
-    viewModel { WeatherSearchViewModel(get(), get()) }
+    viewModel { WeatherSearchViewModel(get(), get(), get()) }
 }
