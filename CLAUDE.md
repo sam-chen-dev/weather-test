@@ -34,6 +34,8 @@ Single-module Android app (`com.samchendev.weathertest`). Currently has one feat
 
 **UiState holds callbacks** — `WeatherSearchUiState` bundles `onSearchClick` and `onGetMyCityWeatherTrigger` as lambdas alongside state. Composables receive only the `UiState` object, not separate callback parameters.
 
+**Screen owns the permission/GPS flow** — The "Get My City Weather" button's `onClick` is a *local* lambda in `WeatherSearchScreen` (not in `UiState`) that drives the permission request → GPS-enable sequence. Only after both are confirmed does it call `uiState.onGetMyCityWeatherTrigger(context)` to hand off to the ViewModel. This keeps Android permission APIs out of the ViewModel.
+
 **Error messages are resource IDs** — `WeatherSearchViewModel._errorMessage` is a `SharedFlow<Int>` emitting string resource IDs (e.g. `R.string.city_not_found_message`), not raw strings.
 
 **City text field lives on the ViewModel** — `WeatherSearchViewModel.cityState` is a Compose `TextFieldState`. The screen binds to it directly; no state hoisting through the UiState.
@@ -48,7 +50,7 @@ Single-module Android app (`com.samchendev.weathertest`). Currently has one feat
 
 `di/Modules.kt` holds a single `appModule`. All bindings are `single` (singletons) except ViewModels which use `viewModel { }`. `WeatherTestApplication` starts Koin in `onCreate`.
 
-`CityStorage` interface → `DataStoreCityStorage` (wraps `DataStore` from `util-kotlin`) → `CityManager` (domain-level wrapper that hardcodes the storage key) → `GetLastCityUseCase` / `SaveLastCityUseCase` → `WeatherSearchViewModel`.
+`CityStorage` interface (in `domain/managers/`) → `DataStoreCityStorage` in `data/local/` (wraps `DataStore` from `util-kotlin`) → `CityManager` (domain-level wrapper that hardcodes the storage key) → `GetLastCityUseCase` / `SaveLastCityUseCase` → `WeatherSearchViewModel`.
 
 ### Navigation (Navigation3)
 
@@ -68,5 +70,8 @@ Uses `androidx.navigation3` (not Navigation 2). Nav destination keys are `@Seria
 ### External library: util-kotlin
 
 `com.github.sam-chen-dev:util-kotlin` (JitPack) provides:
-- `DataStore` — synchronous key/value persistence (wraps DataStore from `androidx.datastore:datastore-core`))
+- `DataStore` — synchronous key/value persistence (wraps `androidx.datastore:datastore-core`)
 - `Text` — composable that takes a string resource `Int` instead of a `String`
+- `Button`, `IconButton`, `CoilImage` — composable UI components
+- `showToast` — shows an Android Toast from a string resource `Int`
+- Permission extensions on `Context`: `isLocationPermissionGranted`, `isGpsEnabled`, `launchLocationPermission`, `launchEnableGps`
