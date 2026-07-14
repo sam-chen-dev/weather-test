@@ -27,6 +27,10 @@ class WeatherSearchViewModel(
     private val getLastCityUseCase: GetLastCityUseCase,
     private val saveLastCityUseCase: SaveLastCityUseCase
 ) : ViewModel() {
+    companion object {
+        private const val TAG = "WeatherSearchViewModel"
+    }
+
     private val uiScope = viewModelScope
     private val _uiState = MutableStateFlow(createUiState())
     private val _errorMessage = MutableSharedFlow<Int>()
@@ -59,7 +63,7 @@ class WeatherSearchViewModel(
 
             updateIsProcessing(false)
         } catch (e: Exception) {
-            Log.e("getWeatherForLastCity()", "Error: ${e.message.toString()}")
+            Log.e(TAG, "Error: ${e.message}")
             updateIsProcessing(false)
         }
     }
