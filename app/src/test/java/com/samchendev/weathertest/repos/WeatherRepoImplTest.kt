@@ -15,7 +15,7 @@ import org.junit.Test
 import retrofit2.Response
 
 class WeatherRepoImplTest {
-    val weatherResponse = createWeatherResponse()
+    private val weatherResponse = createWeatherResponse()
 
     @Test
     fun `getWeatherInfo(city) returns weather info when api succeeds`() = runBlocking {
