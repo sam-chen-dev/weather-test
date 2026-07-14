@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<journey name="My first Journey">
+    <description xml:space="preserve">End-to-End test.</description>
+    <actions xml:space="preserve">
+        <action>Tap on City TextField and verify the soft keyboard appears.</action>
+        <action>Type "Boston" into the city text field, verify the soft keyboard still appears.</action>
+    </actions>
+</journey>

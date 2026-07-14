@@ -36,6 +36,24 @@ android {
     }
     testOptions {
         unitTests.isReturnDefaultValues = true
+        suites {
+            create("journeysTest") {
+                assets {
+                }
+                targets {
+                    create("default") {
+                    }
+                }
+                useJunitEngine {
+                    inputs += listOf(com.android.build.api.dsl.AgpTestSuiteInputParameters.TESTED_APKS)
+                    includeEngines += listOf("journeys-test-engine")
+                    enginesDependencies(libs.junit.platform.launcher)
+                    enginesDependencies(libs.junit.platform.engine)
+                    enginesDependencies(libs.journeys.junit.engine)
+                }
+                targetVariants += listOf("debug")
+            }
+        }
     }
 }
 
@@ -83,4 +101,7 @@ dependencies {
 
     //Coroutine Test
     testImplementation(libs.kotlinx.coroutines.test)
+
+    //Mock Webserver
+    testImplementation(libs.mockwebserver)
 }
