@@ -3,7 +3,6 @@ package com.samchendev.weathertest.presentation.features.weatherSearch
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
-import android.util.Log
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,16 +20,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.net.UnknownHostException
 
 class WeatherSearchViewModel(
     private val getWeatherInfoUseCase: GetWeatherInfoUseCase,
     private val getLastCityUseCase: GetLastCityUseCase,
     private val saveLastCityUseCase: SaveLastCityUseCase
 ) : ViewModel() {
-    companion object {
-        private const val TAG = "WeatherSearchViewModel"
-    }
-
     private val uiScope = viewModelScope
     private val _uiState = MutableStateFlow(createUiState())
     private val _errorMessage = MutableSharedFlow<Int>()
@@ -52,57 +48,66 @@ class WeatherSearchViewModel(
     )
 
     private fun getWeatherForLastCity() = uiScope.launch {
-        try {
-            val city = getLastCityUseCase() ?: return@launch
+        val city = getLastCityUseCase() ?: return@launch
 
-            updateIsProcessing(true)
+        updateIsProcessing(true)
 
-            val weatherInfo = getWeatherInfoUseCase(city)
+        getWeatherInfoUseCase(city)
+            .onSuccess { weatherInfo ->
+                updateWeatherInfo(weatherInfo)
+            }
+            .onFailure { e ->
 
-            weatherInfo?.let { updateWeatherInfo(it) }
+            }
 
-            updateIsProcessing(false)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error: ${e.message}")
-            updateIsProcessing(false)
-        }
+        updateIsProcessing(false)
     }
 
     private fun getWeatherByCity() = uiScope.launch {
-        try {
-            updateIsProcessing(true)
+        updateIsProcessing(true)
 
-            val city = cityState.text.toString()
-            val weatherInfo = getWeatherInfoUseCase(city)
+        val city = cityState.text.toString()
 
-            weatherInfo?.let {
-                updateWeatherInfo(it)
+        getWeatherInfoUseCase(city)
+            .onSuccess { weatherInfo ->
+                updateWeatherInfo(weatherInfo)
                 saveLastCityUseCase(city)
             }
+            .onFailure { e ->
+                val message = when (e) {
+                    is UnknownHostException -> R.string.no_internet_connection
+                    else -> R.string.city_not_found_message
+                }
 
-            updateIsProcessing(false)
-        } catch (e: Exception) {
-            Log.e("getWeatherByCity()", "Error: ${e.message.toString()}")
-            updateIsProcessing(false)
-            _errorMessage.emit(R.string.city_not_found_message)
-        }
+                _errorMessage.emit(message)
+            }
+
+        updateIsProcessing(false)
     }
 
     private fun getMyCityWeather(context: Context) = uiScope.launch {
-        try {
-            updateIsProcessing(true)
+        updateIsProcessing(true)
 
-            val location = getCurrentLocation(context) ?: throw Exception("Location is null")
-            val weatherInfo = getWeatherInfoUseCase(location.latitude, location.longitude)
-
-            weatherInfo?.let { updateWeatherInfo(it) }
-
+        val location = getCurrentLocation(context) ?: run {
             updateIsProcessing(false)
-        } catch (e: Exception) {
-            Log.e("getMyCityWeather()", "Error: ${e.message.toString()}")
-            updateIsProcessing(false)
-            _errorMessage.emit(R.string.unknown_error)
+            _errorMessage.emit(R.string.failed_to_get_location)
+            return@launch
         }
+
+        getWeatherInfoUseCase(location.latitude, location.longitude)
+            .onSuccess { weatherInfo ->
+                updateWeatherInfo(weatherInfo)
+            }
+            .onFailure { e ->
+                val message = when (e) {
+                    is UnknownHostException -> R.string.no_internet_connection
+                    else -> R.string.city_not_found_message
+                }
+
+                _errorMessage.emit(message)
+            }
+
+        updateIsProcessing(false)
     }
 
     @SuppressLint("MissingPermission")
