@@ -30,19 +30,19 @@ class WeatherRepoImplTest {
         }
 
         val weatherRepo = WeatherRepoImpl(weatherApi)
-        val weatherInfo = weatherRepo.getWeatherInfo("New York")
+        val weatherInfo = weatherRepo.getWeatherInfo("New York").getOrThrow()
 
-        assertEquals("New York", weatherInfo?.location)
-        assertEquals("broken clouds", weatherInfo?.description)
-        assertEquals("https://openweathermap.org/payload/api/media/file/01d.png", weatherInfo?.iconUrl)
-        assertEquals(23.45, weatherInfo?.temperature ?: 0.0, 0.0)
-        assertEquals(24.0, weatherInfo?.feelsLike ?: 0.0, 0.0)
-        assertEquals(21.0, weatherInfo?.minTemperature ?: 0.0, 0.0)
-        assertEquals(26.0, weatherInfo?.maxTemperature ?: 0.0, 0.0)
-        assertEquals(1100, weatherInfo?.pressure)
-        assertEquals(65, weatherInfo?.humidity)
-        assertEquals(10000, weatherInfo?.visibility)
-        assertEquals(3.5, weatherInfo?.windSpeed ?: 0.0, 0.0)
+        assertEquals("New York", weatherInfo.location)
+        assertEquals("broken clouds", weatherInfo.description)
+        assertEquals("https://openweathermap.org/payload/api/media/file/01d.png", weatherInfo.iconUrl)
+        assertEquals(23.45, weatherInfo.temperature, 0.0)
+        assertEquals(24.0, weatherInfo.feelsLike, 0.0)
+        assertEquals(21.0, weatherInfo.minTemperature, 0.0)
+        assertEquals(26.0, weatherInfo.maxTemperature, 0.0)
+        assertEquals(1100, weatherInfo.pressure)
+        assertEquals(65, weatherInfo.humidity)
+        assertEquals(10000, weatherInfo.visibility)
+        assertEquals(3.5, weatherInfo.windSpeed, 0.0)
     }
 
     @Test
@@ -83,19 +83,19 @@ class WeatherRepoImplTest {
         }
 
         val weatherRepo = WeatherRepoImpl(weatherApi)
-        val weatherInfo = weatherRepo.getWeatherInfo(40.7128, -74.0060)
+        val weatherInfo = weatherRepo.getWeatherInfo(40.7128, -74.0060).getOrThrow()
 
-        assertEquals("New York", weatherInfo?.location)
-        assertEquals("broken clouds", weatherInfo?.description)
-        assertEquals("https://openweathermap.org/payload/api/media/file/01d.png", weatherInfo?.iconUrl)
-        assertEquals(23.45, weatherInfo?.temperature ?: 0.0, 0.0)
-        assertEquals(24.0, weatherInfo?.feelsLike ?: 0.0, 0.0)
-        assertEquals(21.0, weatherInfo?.minTemperature ?: 0.0, 0.0)
-        assertEquals(26.0, weatherInfo?.maxTemperature ?: 0.0, 0.0)
-        assertEquals(1100, weatherInfo?.pressure)
-        assertEquals(65, weatherInfo?.humidity)
-        assertEquals(10000, weatherInfo?.visibility)
-        assertEquals(3.5, weatherInfo?.windSpeed ?: 0.0, 0.0)
+        assertEquals("New York", weatherInfo.location)
+        assertEquals("broken clouds", weatherInfo.description)
+        assertEquals("https://openweathermap.org/payload/api/media/file/01d.png", weatherInfo.iconUrl)
+        assertEquals(23.45, weatherInfo.temperature, 0.0)
+        assertEquals(24.0, weatherInfo.feelsLike, 0.0)
+        assertEquals(21.0, weatherInfo.minTemperature, 0.0)
+        assertEquals(26.0, weatherInfo.maxTemperature, 0.0)
+        assertEquals(1100, weatherInfo.pressure)
+        assertEquals(65, weatherInfo.humidity)
+        assertEquals(10000, weatherInfo.visibility)
+        assertEquals(3.5, weatherInfo.windSpeed, 0.0)
     }
 
     @Test

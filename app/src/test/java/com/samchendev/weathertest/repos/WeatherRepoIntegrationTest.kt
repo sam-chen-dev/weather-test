@@ -62,10 +62,10 @@ class WeatherRepoIntegrationTest {
 
         mockWebServer.enqueue(mockResponse)
 
-        val result = weatherRepo.getWeatherInfo("Boston")
-        assertEquals("Boston", result?.location)
-        assertEquals("broken clouds", result?.description)
-        assertEquals(23.45, result?.temperature ?: 0.0, 0.0)
+        val result = weatherRepo.getWeatherInfo("Boston").getOrThrow()
+        assertEquals("Boston", result.location)
+        assertEquals("broken clouds", result.description)
+        assertEquals(23.45, result.temperature, 0.0)
 
         val request = mockWebServer.takeRequest()
         assertEquals("/weather?q=Boston", request.target)
