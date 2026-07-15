@@ -1,29 +1,36 @@
 package com.samchendev.weathertest.data.repos
 
-import com.samchendev.weathertest.domain.repos.WeatherRepo
-import com.samchendev.weathertest.domain.models.WeatherInfo
+import android.util.Log
 import com.samchendev.weathertest.data.remote.WeatherApi
+import com.samchendev.weathertest.domain.models.WeatherInfo
+import com.samchendev.weathertest.domain.repos.WeatherRepo
 
 class WeatherRepoImpl(
     private val weatherApi: WeatherApi
 ) : WeatherRepo {
-    override suspend fun getWeatherInfo(city: String): WeatherInfo? {
-        val result = weatherApi.getWeather(city)
-
-        if (!result.isSuccessful) {
-            throw Exception("${result.errorBody()?.string()}")
-        }
-
-        return result.body()?.toWeatherInfo()
+    companion object {
+        private const val TAG = "WeatherRepoImpl"
     }
 
-    override suspend fun getWeatherInfo(lat: Double, lon: Double): WeatherInfo? {
-        val result = weatherApi.getWeather(lat, lon)
+    override suspend fun getWeatherInfo(city: String): Result<WeatherInfo> {
+        return try {
+            val weatherInfo = weatherApi.getWeather(city).toWeatherInfo()
 
-        if (!result.isSuccessful) {
-            throw Exception("${result.errorBody()?.string()}")
+            Result.success(weatherInfo)
+        } catch (e: Exception) {
+            Log.e(TAG, "getWeatherInfo(city: String) failed", e)
+            Result.failure(e)
         }
+    }
 
-        return result.body()?.toWeatherInfo()
+    override suspend fun getWeatherInfo(lat: Double, lon: Double): Result<WeatherInfo> {
+        return try {
+            val weatherInfo = weatherApi.getWeather(lat, lon).toWeatherInfo()
+
+            Result.success(weatherInfo)
+        } catch (e: Exception) {
+            Log.e(TAG, "getWeatherInfo(lat: Double, lon: Double) failed", e)
+            Result.failure(e)
+        }
     }
 }
